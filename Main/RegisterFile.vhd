@@ -16,7 +16,7 @@ entity RegisterFile is
 end entity RegisterFile;
 
 architecture behavioral of RegisterFile is
-    type reg_arr is array (31 to 0) of std_logic_vector(31 downto 0);
+    type reg_arr is array (0 to 31) of std_logic_vector(31 downto 0);
     signal regs : reg_arr := (others => (others => '0'));
 begin
     process(clk)
