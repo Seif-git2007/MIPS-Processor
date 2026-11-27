@@ -15,7 +15,28 @@ entity datapath is
 end entity datapath;
 
 architecture structural of datapath is
-    -- TODO: Declare internal signals and components (RegisterFile, ALU)
+    signal src1, src2, alu_result : std_logic_vector(31 downto 0);
+
 begin
-    -- TODO: Instantiate and wire RegisterFile and ALU
+    RF : entity work.RegisterFile
+        port map(
+            read_sel1  => instr(25 downto 21),
+            read_sel2  => instr(20 downto 16),
+            write_sel  => instr(15 downto 11),
+            write_ena  => regwrite,
+            clk        => clk,
+            write_data => alu_result,
+            data1      => src1,
+            data2      => src2
+        )
+    ALU : entity work.ALU
+        port map(
+            data1   => src1,
+            data2   => src2,
+            aluop   => aluoperation,
+            dataout => alu_result,
+            zflag   => zero
+        );
+    
+    aluout <= alu_result;
 end architecture structural;
