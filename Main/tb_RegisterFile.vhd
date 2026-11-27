@@ -8,11 +8,22 @@ architecture sim of tb_RegisterFile is
   signal write_ena : std_logic := '0';
   signal clk       : std_logic := '0';
   signal write_data, data1, data2 : std_logic_vector(31 downto 0) := (others => '0');
+  signal sim_done  : boolean := false;
 begin
   uut: entity work.RegisterFile
     port map (read_sel1, read_sel2, write_sel, write_ena, clk, write_data, data1, data2);
 
-  clk <= not clk after 5 ns;   -- rising edges at 5, 15, 25 ns ...
+  -- Safe clock: stops immediately when sim_done = true
+  clk_process: process
+  begin
+    while not sim_done loop
+      clk <= '0';
+      wait for 5 ns;
+      clk <= '1';
+      wait for 5 ns;
+    end loop;
+    wait;
+  end process;
 
   process
   begin
@@ -39,6 +50,8 @@ begin
     read_sel1 <= "00010"; wait for 1 ns;
     assert data1 = x"00000005" report "write happened with ena=0" severity error;
     report "RegisterFile test finished";
+    
+    sim_done <= true; -- Stops the clock and simulation cleanly!
     wait;
   end process;
 end sim;

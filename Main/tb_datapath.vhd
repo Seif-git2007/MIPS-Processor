@@ -13,6 +13,7 @@ architecture sim of tb_datapath is
     signal zero         : std_logic;
     signal regwrite     : std_logic := '0';
     signal aluout       : std_logic_vector(31 downto 0);
+    signal sim_done     : boolean   := false;
 
     constant clk_period : time := 10 ns;
 begin
@@ -27,12 +28,16 @@ begin
             aluout       => aluout
         );
 
+    -- Clock process stops automatically when simulation finishes
     clk_process: process
     begin
-        clk <= '0';
-        wait for clk_period / 2;
-        clk <= '1';
-        wait for clk_period / 2;
+        while not sim_done loop
+            clk <= '0';
+            wait for clk_period / 2;
+            clk <= '1';
+            wait for clk_period / 2;
+        end loop;
+        wait;
     end process;
 
     stim_proc: process
@@ -85,6 +90,7 @@ begin
         wait for clk_period;
 
         regwrite <= '0';
+        sim_done <= true; -- Terminates the clock and stops the simulation cleanly!
         wait;
     end process;
 end architecture sim;
