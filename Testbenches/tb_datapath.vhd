@@ -6,7 +6,6 @@ entity tb_datapath is
 end entity tb_datapath;
 
 architecture sim of tb_datapath is
-    -- Signals declaration
     signal clk          : std_logic := '0';
     signal reset        : std_logic := '0';
     signal instr        : std_logic_vector(31 downto 0) := (others => '0');
@@ -15,10 +14,8 @@ architecture sim of tb_datapath is
     signal regwrite     : std_logic := '0';
     signal aluout       : std_logic_vector(31 downto 0);
 
-    -- Clock period definition
     constant clk_period : time := 10 ns;
 begin
-    -- Instantiate the Unit Under Test (UUT)
     uut: entity work.datapath
         port map (
             clk          => clk,
@@ -30,7 +27,6 @@ begin
             aluout       => aluout
         );
 
-    -- Clock process
     clk_process: process
     begin
         clk <= '0';
@@ -39,10 +35,49 @@ begin
         wait for clk_period / 2;
     end process;
 
-    -- Stimulus process
     stim_proc: process
     begin
-        -- TODO: Implement test cases for R-type instructions
+        reset <= '1';
+        wait for clk_period;
+        reset <= '0';
+        wait for clk_period;
+
+        instr        <= x"00000827";
+        aluoperation <= "1100";
+        regwrite     <= '1';
+        wait for clk_period;
+
+        instr        <= x"00011022";
+        aluoperation <= "0110";
+        regwrite     <= '1';
+        wait for clk_period;
+
+        instr        <= x"00421820";
+        aluoperation <= "0010";
+        regwrite     <= '1';
+        wait for clk_period;
+
+        instr        <= x"00622025";
+        aluoperation <= "0001";
+        regwrite     <= '1';
+        wait for clk_period;
+
+        instr        <= x"00822824";
+        aluoperation <= "0000";
+        regwrite     <= '1';
+        wait for clk_period;
+
+        instr        <= x"0043302A";
+        aluoperation <= "0111";
+        regwrite     <= '1';
+        wait for clk_period;
+
+        instr        <= x"00633822";
+        aluoperation <= "0110";
+        regwrite     <= '1';
+        wait for clk_period;
+
+        regwrite <= '0';
         wait;
     end process;
 end architecture sim;
