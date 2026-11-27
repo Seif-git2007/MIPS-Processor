@@ -28,7 +28,7 @@ begin
             write_data => alu_result,
             data1      => src1,
             data2      => src2
-        )
+        );
     ALU : entity work.ALU
         port map(
             data1   => src1,
