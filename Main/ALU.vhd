@@ -33,15 +33,5 @@ begin
     dataout <= s;
     zflag   <= '1' when s = x"00000000" else '0';
 
-    
-        
-    
-    
-
-
-
-
-
-
 
 end architecture behavioral;

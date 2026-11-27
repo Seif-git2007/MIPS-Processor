@@ -6,7 +6,6 @@ entity tb_ALU is
 end entity tb_ALU;
 
 architecture sim of tb_ALU is
-    -- Signals declaration
     signal data1   : std_logic_vector(31 downto 0) := (others => '0');
     signal data2   : std_logic_vector(31 downto 0) := (others => '0');
     signal aluop   : std_logic_vector(3 downto 0)  := (others => '0');
@@ -20,7 +19,6 @@ architecture sim of tb_ALU is
     constant OP_NOR : std_logic_vector(3 downto 0) := "1100";
     constant OP_SLT : std_logic_vector(3 downto 0) := "0111";
 begin
-    -- Instantiate the Unit Under Test (UUT)
     uut: entity work.ALU
         port map (
             data1   => data1,
@@ -30,7 +28,6 @@ begin
             zflag   => zflag
         );
 
-    -- Stimulus process
     stim_proc: process
         variable fail_count : integer := 0;
         variable test_count : integer := 0;
@@ -58,9 +55,6 @@ begin
             end if;
         end procedure check_alu;
     begin
-        -- =========================================================
-        -- 1. Basic functional tests
-        -- =========================================================
         -- AND
         check_alu("AND basic",          OP_AND, x"F0F00F0F", x"0FF0FF00", x"00F00F00", '0');
         check_alu("AND all ones",       OP_AND, x"FFFFFFFF", x"FFFFFFFF", x"FFFFFFFF", '0');
@@ -85,7 +79,7 @@ begin
         check_alu("NOR complementary",  OP_NOR, x"0000FFFF", x"FFFF0000", x"00000000", '1');
         check_alu("NOR FFFFFFFF nor 0", OP_NOR, x"FFFFFFFF", x"00000000", x"00000000", '1');
 
-        -- SLT basic
+        -- SLT 
         check_alu("SLT 3 < 5",          OP_SLT, x"00000003", x"00000005", x"00000001", '0');
         check_alu("SLT 5 < 3",          OP_SLT, x"00000005", x"00000003", x"00000000", '1');
         check_alu("SLT -5 < -2",        OP_SLT, x"FFFFFFFB", x"FFFFFFFE", x"00000001", '0');
@@ -93,31 +87,17 @@ begin
         check_alu("SLT 5 < -2",         OP_SLT, x"00000005", x"FFFFFFFE", x"00000000", '1');
         check_alu("SLT 5 < 5 equal",    OP_SLT, x"00000005", x"00000005", x"00000000", '1');
 
-        -- =========================================================
-        -- 2. Edge cases: SLT signed overflow (33-bit sign extension)
-        -- =========================================================
         check_alu("SLT INT_MIN < +1",      OP_SLT, x"80000000", x"00000001", x"00000001", '0');
         check_alu("SLT INT_MAX < -1",      OP_SLT, x"7FFFFFFF", x"FFFFFFFF", x"00000000", '1');
         check_alu("SLT INT_MIN < INT_MAX", OP_SLT, x"80000000", x"7FFFFFFF", x"00000001", '0');
         check_alu("SLT INT_MAX < INT_MIN", OP_SLT, x"7FFFFFFF", x"80000000", x"00000000", '1');
         check_alu("SLT INT_MIN < INT_MIN", OP_SLT, x"80000000", x"80000000", x"00000000", '1');
 
-        -- =========================================================
-        -- 3. Edge cases: 32-bit wrap-around / carry boundaries
-        -- =========================================================
         check_alu("ADD -1 + 1 wrap",       OP_ADD, x"FFFFFFFF", x"00000001", x"00000000", '1');
         check_alu("ADD INT_MAX + 1 wrap",  OP_ADD, x"7FFFFFFF", x"00000001", x"80000000", '0');
         check_alu("SUB 0 - 1 wrap",        OP_SUB, x"00000000", x"00000001", x"FFFFFFFF", '0');
         check_alu("SUB INT_MIN - 1 wrap",  OP_SUB, x"80000000", x"00000001", x"7FFFFFFF", '0');
 
-        -- =========================================================
-        -- Summary
-        -- =========================================================
-        if fail_count = 0 then
-            report "=== ALL " & integer'image(test_count) & " ALU TESTS PASSED ===" severity note;
-        else
-            report "=== " & integer'image(fail_count) & " OF " & integer'image(test_count) & " ALU TESTS FAILED ===" severity failure;
-        end if;
 
         wait;
     end process;
