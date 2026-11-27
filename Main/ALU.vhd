@@ -13,6 +13,35 @@ entity ALU is
 end entity ALU;
 
 architecture behavioral of ALU is
+    signal d1, d2, s : std_logic_vector(31 downto 0);
+    signal c         : unsigned(32 downto 0);
+    signal temp      : unsigned(32 downto 0);
+
 begin
-    -- TODO: Implement ALU logic
+    d1   <= not data1 when aluop(3) = '1' else data1;
+    d2   <= not data2 when aluop(2) = '1' else data2;
+    c    <= (0 => aluop(2), others => '0');
+
+    -- Sign-extend to 33 bits so signed subtraction (A - B) never overflows
+    temp <= unsigned(d1(31) & d1) + unsigned(d2(31) & d2) + c;
+
+    s <= d1 and d2 when aluop(1 downto 0) = "00" else
+         d1 or d2  when aluop(1 downto 0) = "01" else
+         std_logic_vector(temp(31 downto 0)) when aluop(1 downto 0) = "10" else
+         (0 => temp(32), others => '0');
+
+    dataout <= s;
+    zflag   <= '1' when s = x"00000000" else '0';
+
+    
+        
+    
+    
+
+
+
+
+
+
+
 end architecture behavioral;
