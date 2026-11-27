@@ -16,6 +16,18 @@ entity RegisterFile is
 end entity RegisterFile;
 
 architecture behavioral of RegisterFile is
+    type reg_arr is array (31 to 0) of std_logic_vector(31 downto 0);
+    signal regs : reg_arr := (others => (others => '0'));
 begin
-    -- TODO: Implement Register File logic
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if write_ena = '1' and write_sel /= "00000" then
+                regs(to_integer(unsigned(write_sel))) <= write_data;
+            end if;
+        end if;
+    end process;
+
+    data1 <= regs(to_integer(unsigned(read_sel1)));
+    data2 <= regs(to_integer(unsigned(read_sel2)));
 end architecture behavioral;
