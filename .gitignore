@@ -1,0 +1,35 @@
+# ModelSim / QuestaSim
+work/
+transcript
+*.wlf
+*.vstf
+vsim.wlf
+*.mti
+*.mpf
+
+# Quartus Prime
+db/
+incremental_db/
+output_files/
+*.qsf.bak
+*.qpf.bak
+*.rpt
+*.summary
+*.sof
+*.pof
+*.pin
+*.done
+
+# Vivado / Xilinx
+*.jou
+*.log
+.Xil/
+xsim.dir/
+
+# OS and Editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
